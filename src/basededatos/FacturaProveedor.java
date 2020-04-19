@@ -1,15 +1,18 @@
 package basededatos;
 
+import utilidades.Constantes;
+
 public class FacturaProveedor {
-    String basImponible;
-    String cifProveedor;
-    String desFactura;
-    String fecFactura;
-    String fecVencimiento;
-    String ivaImporte;
-    String numFactura;
-    String razProveedor;
-    String totImporte;
+    private String basImponible;
+    private String cifProveedor;
+    private String desFactura;
+    private String fecFactura;
+    private String fecVencimiento;
+    private String ivaImporte;
+    private String numFactura;
+    private String razProveedor;
+    private String totImporte;
+    private String idFactura;
 
     public FacturaProveedor(String basImponible, String cifProveedor, String desFactura, String fecFactura, String fecVencimiento, String ivaImporte, String numFactura, String razProveedor, String totImporte) {
         this.basImponible = basImponible;
@@ -21,6 +24,15 @@ public class FacturaProveedor {
         this.numFactura = numFactura;
         this.razProveedor = razProveedor;
         this.totImporte = totImporte;
+        idFactura =cifProveedor+ Constantes.CARACTER_SEPARADOR+numFactura;
+    }
+
+    public String getIdFactura() {
+        return idFactura;
+    }
+
+    public void setIdFactura(String idFactura) {
+        this.idFactura = idFactura;
     }
 
     public String getBasImponible() {

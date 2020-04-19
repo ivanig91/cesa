@@ -8,6 +8,10 @@ public class Proveedor {
     private String segImporte;
     private String segResponsabilidad;
 
+    public Proveedor(){
+
+    }
+
     public Proveedor(String cifProveedor, String fecHomologacion, String razProveedor, String regNotarial, String segImporte, String segResponsabilidad) {
         this.cifProveedor = cifProveedor;
         this.fecHomologacion = fecHomologacion;

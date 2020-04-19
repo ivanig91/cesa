@@ -19,8 +19,11 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
         BaseDeDatos miBase = new BaseDeDatos();
-        miBase.insertarProveedor();
-        //repositorio
+        //
+        //miBase.insertarProveedor();
+        //
+        //El metodo insertaProveedor acutalmente inserta un proveedor que con una a en todos los campos
+        // inserta correctamente el proveedor en firebase
 
     }
 

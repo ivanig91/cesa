@@ -10,5 +10,6 @@ public class Constantes {
     public static String PROVEEDOR_REGION_NOTARIAL="regNotarial";
     public static String PROVEEDOR_IMPORTE_SEGURO_RESPONSABLIDAD="segImporte";
     public static String PROVEEDOR_SEGURO_RESPONSABILIDAD = "segResponsabilidad";
+    public static String PROVEEDOR_CIF ="cifProveedor";
     public static String CARACTER_SEPARADOR="_";
 }

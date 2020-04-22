@@ -3,6 +3,10 @@ package sample;
 import basededatos.BaseDeDatos;
 import basededatos.FacturaProveedor;
 import basededatos.Proveedor;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -21,13 +25,6 @@ public class Main extends Application {
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
-        BaseDeDatos miBase = new BaseDeDatos();
-
-        FacturaProveedor factura = new FacturaProveedor("a","a","a","a","a","a","a","a","a");
-        //miBase.insertarFactura(factura);
-        ArrayList<Proveedor> proveedores = miBase.listaProveedores();
-        System.out.println(proveedores.size());
-
 
     }
 

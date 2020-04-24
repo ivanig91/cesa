@@ -12,4 +12,6 @@ public class Constantes {
     public static String PROVEEDOR_SEGURO_RESPONSABILIDAD = "segResponsabilidad";
     public static String PROVEEDOR_CIF ="cifProveedor";
     public static String CARACTER_SEPARADOR="_";
+    public static String ACTUALIZAR_PROVEEDOR ="Actualizar Proveedor";
+    public static String INSERTAR_PROVEEDOR = "Insertar Proveedor";
 }

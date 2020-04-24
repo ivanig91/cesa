@@ -69,37 +69,16 @@ public class BaseDeDatos {
 
     }
 
-    public void getProv() throws IOException, InterruptedException {
-       HttpClient client = HttpClient.newHttpClient();
-       HttpRequest request = HttpRequest.newBuilder().uri(URI.create("https://cesafct.firebaseio.com/Proveedor.json")).build();
-        HttpResponse<String> response =
-                client.send(request, HttpResponse.BodyHandlers.ofString());
-        //System.out.println(response.statusCode());
-        //System.out.println(response.body());
-
-        JsonParser parser = new JsonParser();
-        JsonElement jsonTree = parser.parse(response.body());
-        JsonObject jsonObject = jsonTree.getAsJsonObject();
 
 
-    }
 
-    public FirebaseDatabase getDataBase() {
-        return dataBase;
-    }
-
-
-    public DatabaseReference getTablaProveedor() {
-        tablaProveedor = dataBase.getReference(Constantes.TABLA_PROVEEDOR);
-        return tablaProveedor;
-    }
-    public void agregaDatosFS(Proveedor proveedor){
+    public void insertarProveedorFS(Proveedor proveedor){
         DocumentReference docRef = dbStore.collection(Constantes.TABLA_PROVEEDOR).document();
         Map<String,Object> data = new HashMap<>();
 
         data.put("cifProveedor",proveedor.getCifProveedor());
         data.put("fecHomologacion",proveedor.getFecHomologacion());
-        data.put("razProveedor",proveedor.getFecHomologacion());
+        data.put("razProveedor",proveedor.getRazProveedor());
         data.put("regNotarial",proveedor.getRegNotarial());
         data.put("segImporte",proveedor.getSegImporte());
         data.put("segResponsabilidad",proveedor.getSegResponsabilidad());
@@ -107,6 +86,34 @@ public class BaseDeDatos {
         ApiFuture<WriteResult> result = docRef.set(data);
 
     }
+    public void borraProveedorSF(Proveedor proveedor){
+        String numDoc = getDocumentoFS(proveedor.getCifProveedor());
+        ApiFuture<WriteResult> registro = dbStore.collection(Constantes.TABLA_PROVEEDOR).document(numDoc).delete();
+
+    }
+
+    public boolean actualizarProveedorSF(Proveedor proveedor){
+            boolean flip = false;
+            String numDoc = getDocumentoFS(proveedor.getCifProveedor());
+
+            if(numDoc!=null){
+                flip = true;
+                DocumentReference registro = dbStore.collection(Constantes.TABLA_PROVEEDOR).document(numDoc);
+                System.out.println("clase base de datos: esto ocurre"+registro.getId());
+                Map<String,Object> data = new HashMap<>();
+
+                data.put("cifProveedor",proveedor.getCifProveedor());
+                data.put("fecHomologacion",proveedor.getFecHomologacion());
+                data.put("razProveedor",proveedor.getRazProveedor());
+                data.put("regNotarial",proveedor.getRegNotarial());
+                data.put("segImporte",proveedor.getSegImporte());
+                data.put("segResponsabilidad",proveedor.getSegResponsabilidad());
+
+                ApiFuture<WriteResult> result = registro.update(data);
+            }
+        return flip;
+    }
+
     public ArrayList<Proveedor> leerProveedorSF(){
         ArrayList<Proveedor> listaProvSF = new ArrayList<>();
         ApiFuture<QuerySnapshot> query = dbStore.collection(Constantes.TABLA_PROVEEDOR).get();
@@ -118,19 +125,18 @@ public class BaseDeDatos {
             String razProveedor;
             String regNotarial;
             String segImporte;
-            String segREsponsabilidad;
-            Proveedor proveedor = new Proveedor();
+            String segResponsabilidad;
+            Proveedor proveedor;
 
             for(QueryDocumentSnapshot document : documents){
-                proveedor.setCifProveedor(document.getString(Constantes.PROVEEDOR_CIF));
-                proveedor.setFecHomologacion(document.getString(Constantes.PROVEEDOR_FECHA_HOMOLOGACION));
-                proveedor.setRazProveedor(document.getString(Constantes.PROVEEDOR_RAZON_SOCIAL));
-                proveedor.setRegNotarial(document.getString(Constantes.PROVEEDOR_REGION_NOTARIAL));
-                proveedor.setSegImporte(document.getString(Constantes.PROVEEDOR_IMPORTE_SEGURO_RESPONSABLIDAD));
-                proveedor.setSegResponsabilidad(document.getString(Constantes.PROVEEDOR_SEGURO_RESPONSABILIDAD));
-
+                cifProveedor = document.getString(Constantes.PROVEEDOR_CIF);
+                fecHomologacion = document.getString(Constantes.PROVEEDOR_FECHA_HOMOLOGACION);
+                razProveedor = document.getString(Constantes.PROVEEDOR_RAZON_SOCIAL);
+                regNotarial = document.getString(Constantes.PROVEEDOR_REGION_NOTARIAL);
+                segImporte = document.getString(Constantes.PROVEEDOR_IMPORTE_SEGURO_RESPONSABLIDAD);
+                segResponsabilidad = document.getString(Constantes.PROVEEDOR_SEGURO_RESPONSABILIDAD);
+                proveedor = new Proveedor(cifProveedor,fecHomologacion,razProveedor,regNotarial,segImporte,segResponsabilidad);
                 listaProvSF.add(proveedor);
-
 
             }
         } catch (InterruptedException e) {
@@ -140,42 +146,39 @@ public class BaseDeDatos {
         }
         return  listaProvSF;
     }
+    public String getDocumentoFS(String cifProveedor){
+        ApiFuture<QuerySnapshot> query = dbStore.collection(Constantes.TABLA_PROVEEDOR).get();
+        String numDoc = null;
+        try {
+            QuerySnapshot querySnapshot = query.get();
+            List<QueryDocumentSnapshot> documents = querySnapshot.getDocuments();
+
+            for (QueryDocumentSnapshot document : documents) {
+                if (document.getString(Constantes.PROVEEDOR_CIF).equals(cifProveedor)) {
+                    numDoc = document.getId();
+                }
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        return  numDoc;
+    }
+
+    public FirebaseDatabase getDataBase() {
+        return dataBase;
+    }
 
 
+    public DatabaseReference getTablaProveedor() {
+        tablaProveedor = dataBase.getReference(Constantes.TABLA_PROVEEDOR);
+        return tablaProveedor;
+    }
 
     public void setMiListaProv(ArrayList<Proveedor> miListaProv) {
         this.miListaProv = miListaProv;
     }
-
-    public void insertarProveedor(Proveedor proveedor){
-
-        DatabaseReference ref = tablaProveedor.child(proveedor.getCifProveedor());
-        ref.setValueAsync(proveedor);
-    }
-
-
-    public void borrarProveedor(Proveedor proveedor){
-        DatabaseReference ref = tablaProveedor.child(proveedor.getCifProveedor());
-        ref.setValueAsync(null);
-    }
-
-
-
-    public void modificarProveedor(Proveedor proveedor,String constanteModificacion ,String stringModificacion){
-        FirebaseDatabase dataBase = FirebaseDatabase.getInstance();
-        DatabaseReference tablaProveedor = dataBase.getReference(Constantes.TABLA_PROVEEDOR);
-        DatabaseReference ref = tablaProveedor.child(proveedor.getCifProveedor());
-        Map<String, Object> modificacion = new HashMap<>();
-        modificacion.put(constanteModificacion,stringModificacion);
-        ref.updateChildrenAsync(modificacion);
-    }
-    public void insertarFactura(FacturaProveedor facturaProveedor){
-        FirebaseDatabase dataBase = FirebaseDatabase.getInstance();
-        DatabaseReference tablaFactura = dataBase.getReference(Constantes.TABLA_FACTURA);
-        DatabaseReference ref = tablaFactura.child(facturaProveedor.getIdFactura());
-        ref.setValueAsync(facturaProveedor);
-    }
-
 
 
 
